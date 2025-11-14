@@ -1,29 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>Configure Fluke UBI Teams Transcript</title>
-<script src="https://res.cdn.office.net/teams-js/2.13.0/js/MicrosoftTeams.min.js"></script>
+  <meta charset="UTF-8" />
+  <title>Configure Fluke UBI Teams Transcript</title>
+  <script src="https://res.cdn.office.net/teams-js/2.13.0/js/MicrosoftTeams.min.js"></scriptequiv="Content-Security-Policy"
+        content="default-src 'self' https:; script-src 'self' https://res.cdn.office.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; frame-ancestors https://*.teams.microsoft.com https://*.skype.com https://*.teams.microsoft.us https://*.gov.teams.microsoft.us;">
+  <style> body { font-family: Segoe UI, Arial, sans-serif; padding: 16px; } .ok{color:green} .err{color:#c00} </style>
 </head>
 <body>
-<h3>Fluke UBI Teams Transcript App Setup</h3>
-<p>Select configuration options, then click <b>Save</b> in Teams.</p>
- 
+  <h3>Fluke UBI Teams Transcript App Setup</h3>
+  <p>Select configuration options, then click <b>Save</b> in Teams.</p>
+  <div id="status"></div>
+
   <script>
-    microsoftTeams.app.initialize().then(() => {
+    (async function () {
+      const log = (m, cls='') => {
+        console.log(m);
+        const el = document.getElementById('status');
+        const p = document.createElement('div');
+        if (cls) p.className = cls;
+        p.textContent = m;
+        el.appendChild(p);
+      };
+
+      try {
+        log('Initializing Teams SDK...');
+        await microsoftTeams.app.initialize();
+        log('Teams SDK initialized ✅', 'ok');
+
+        // (Optional) Confirm we are indeed in a config context
+        const ctx = await microsoftTeams.app.getContext();
+        log(`Context: ${ctx.app.host.name} | ${ctx.page.frameContext}`, 'ok');
+        // Expected: frameContext = 'settings' during add flow
+
+        // Register Save handler FIRST
         microsoftTeams.pages.config.registerOnSaveHandler((saveEvent) => {
+          try {
+            // Provide the actual tab content (what loads after Save)
             microsoftTeams.pages.config.setConfig({
-                entityId: "fluke-ubi-tab",
-                contentUrl: "https://rekhakiranmai.github.io/TeamsTest/tab.html",
-                websiteUrl: "https://rekhakiranmai.github.io/TeamsTest/",
-                suggestedDisplayName: "Fluke UBI Teams Transcript"
+              entityId: "fluke-ubi-tab",
+              contentUrl: "https://rekhakiranmai.github.io/TeamsTest/tab.html",
+              websiteUrl: "https://rekhakiranmai.github.io/TeamsTest/",
+              suggestedDisplayName: "Fluke UBI Teams Transcript"
             });
+            log('Config set; notifying success...', 'ok');
             saveEvent.notifySuccess();
+          } catch (e) {
+            console.error(e);
+            log('Error in onSave handler: ' + e?.message, 'err');
+            saveEvent.notifyFailure(e?.message || 'SetConfig failed');
+          }
         });
- 
-        // Enable Save button
+
+        // IMPORTANT: Enable Save button AFTER init
         microsoftTeams.pages.config.setValidityState(true);
-    });
-</script>
+        log('Validity set to TRUE (Save should be enabled) ✅', 'ok');
+
+      } catch (e) {
+        console.error(e);
+        log('Initialization error: ' + (e?.message || e), 'err');
+      }
+    })();
+  </script>
 </body>
 </html>
+ 
