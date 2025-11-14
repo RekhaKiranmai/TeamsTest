@@ -4,26 +4,24 @@
 <meta charset="UTF-8" />
 <title>Configure Teams Transcript</title>
 <script src="https://res.cdn.office.net/teams-js/2.13.0/js/MicrosoftTeams.min.js"></script>
-</head>
-<body>
-<h3> Teams Transcript App Setup</h3>
-<p>Select configuration options, then click <b>Save</b> in Teams.</p>
- 
-  <script>
+<script>
     microsoftTeams.app.initialize().then(() => {
+        console.log("Teams SDK initialized inside Teams");
+
+        // Enable Save button
+        microsoftTeams.pages.config.setValidityState(true);
+
+        // Register Save handler
         microsoftTeams.pages.config.registerOnSaveHandler((saveEvent) => {
             microsoftTeams.pages.config.setConfig({
-                entityId: "tab",
-                contentUrl: "https://your-domain.com/tab",
-                websiteUrl: "https://your-domain.com/",
-                suggestedDisplayName: "Teams Transcript"
+                entityId: "FlukeTranscriptTab",
+                contentUrl: "https://rekhakiranmai.github.io/TeamsTest/tab.html", // <-- Create this page
+                websiteUrl: "https://rekhakiranmai.github.io/TeamsTest/",
+                suggestedDisplayName: "Fluke Transcript"
             });
             saveEvent.notifySuccess();
         });
- 
-        // Enable Save button
-        microsoftTeams.pages.config.setValidityState(true);
-    });
+    }).catch(err => console.error("Teams SDK init failed:", err));
 </script>
 </body>
 </html>
