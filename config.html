@@ -9,25 +9,21 @@
 <h3>Fluke UBI Teams Transcript App Setup</h3>
 <p>Select configuration options, then click <b>Save</b> in Teams.</p>
  
-<script src="https://res.cdn.office.net/teams-js/2.13.0/js/MicrosoftTeams.min.js"></script>
-<script>
+  <script>
     microsoftTeams.app.initialize().then(() => {
-        console.log("Teams SDK initialized inside Teams");
-
-        // Enable Save button
-        microsoftTeams.pages.config.setValidityState(true);
-
-        // Register Save handler
         microsoftTeams.pages.config.registerOnSaveHandler((saveEvent) => {
             microsoftTeams.pages.config.setConfig({
-                entityId: "FlukeTranscriptTab",
-                contentUrl: "https://rekhakiranmai.github.io/TeamsTest/tab.html", // <-- Create this page
+                entityId: "fluke-ubi-tab",
+                contentUrl: "https://rekhakiranmai.github.io/TeamsTest/tab.html",
                 websiteUrl: "https://rekhakiranmai.github.io/TeamsTest/",
-                suggestedDisplayName: "Fluke Transcript"
+                suggestedDisplayName: "Fluke UBI Teams Transcript"
             });
             saveEvent.notifySuccess();
         });
-    }).catch(err => console.error("Teams SDK init failed:", err));
+ 
+        // Enable Save button
+        microsoftTeams.pages.config.setValidityState(true);
+    });
 </script>
 </body>
 </html>
